@@ -1,0 +1,6 @@
+{
+  "name": "Face Space",
+  "description": "The ultimate social hub combining MySpace custom themes, AI Dating Wingman, live bar & club hotspot bulletins, video safety feed, floating social windows, and ad marketplace. #BetterTogether",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
