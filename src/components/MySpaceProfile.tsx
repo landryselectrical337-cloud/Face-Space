@@ -16,9 +16,15 @@ import {
   Send, 
   Zap, 
   Star,
-  ExternalLink
+  Quote,
+  Radio,
+  Tag,
+  Briefcase,
+  Compass,
+  Check
 } from 'lucide-react';
 import { UserProfile, ThemePreset, Friend, UserSubscription } from '../types';
+import { ProfileRadioPlayer } from './ProfileRadioPlayer';
 
 interface MySpaceProfileProps {
   profile: UserProfile;
@@ -37,9 +43,22 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
   subscription,
   openAuthModal,
 }) => {
-  const [isPlayingSong, setIsPlayingSong] = useState(true);
   const [isEditingTheme, setIsEditingTheme] = useState(false);
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [isEditingQuote, setIsEditingQuote] = useState(false);
   const [newWallPost, setNewWallPost] = useState('');
+  const [newInterestTag, setNewInterestTag] = useState('');
+  
+  // Quote edit state
+  const [tempQuote, setTempQuote] = useState(profile.quote || 'You don\'t find chemistry in a rigid algorithm, you create it across a cocktail table with real conversation.');
+  const [tempQuoteAuthor, setTempQuoteAuthor] = useState(profile.quoteAuthor || profile.name);
+
+  // Bio edit state
+  const [tempBio, setTempBio] = useState(profile.bio);
+  const [tempOccupation, setTempOccupation] = useState(profile.occupation || 'Creative Director');
+  const [tempZodiac, setTempZodiac] = useState(profile.zodiac || 'Scorpio ♏');
+  const [tempLocation, setTempLocation] = useState(profile.location);
+
   const [wallPosts, setWallPosts] = useState([
     {
       id: 'w1',
@@ -51,6 +70,14 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
     },
     {
       id: 'w2',
+      author: 'Sofia Reyes',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
+      text: 'Your profile radio station choice is fire Alex! Put me onto this remix!',
+      time: 'Yesterday at 6:15 PM',
+      likes: 8,
+    },
+    {
+      id: 'w3',
       author: 'AI Wingman Bot',
       avatar: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80',
       text: 'Confidence streak active! 3 successful date check-ins this month! Keep shining Alex! 🌟',
@@ -94,6 +121,48 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
     setNewWallPost('');
   };
 
+  const handleSaveQuote = (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfile(prev => ({
+      ...prev,
+      quote: tempQuote,
+      quoteAuthor: tempQuoteAuthor
+    }));
+    setIsEditingQuote(false);
+  };
+
+  const handleSaveBio = (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfile(prev => ({
+      ...prev,
+      bio: tempBio,
+      occupation: tempOccupation,
+      zodiac: tempZodiac,
+      location: tempLocation
+    }));
+    setIsEditingBio(false);
+  };
+
+  const handleAddInterestTag = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newInterestTag.trim()) return;
+    const currentInterests = profile.interests || ['Indie Vinyl', 'Speakeasies', 'Late-night Drives'];
+    if (!currentInterests.includes(newInterestTag.trim())) {
+      setProfile(prev => ({
+        ...prev,
+        interests: [...currentInterests, newInterestTag.trim()]
+      }));
+    }
+    setNewInterestTag('');
+  };
+
+  const handleRemoveInterestTag = (tagToRemove: string) => {
+    setProfile(prev => ({
+      ...prev,
+      interests: (prev.interests || []).filter(t => t !== tagToRemove)
+    }));
+  };
+
   return (
     <div className={`min-h-screen p-4 sm:p-6 transition-all duration-500 ${getThemeBackground()}`}>
       <div className="max-w-6xl mx-auto space-y-6">
@@ -113,10 +182,10 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
             {/* Quick Theme Customizer Button */}
             <button
               onClick={() => setIsEditingTheme(!isEditingTheme)}
-              className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-pink-500/50 text-pink-300 text-xs font-semibold backdrop-blur-md transition shadow-lg"
+              className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-pink-500/50 text-pink-300 text-xs font-semibold backdrop-blur-md transition shadow-lg cursor-pointer"
             >
-              <Palette className="w-4 h-4 text-pink-400 animate-spin" style={{ animationDuration: '8s' }} />
-              <span>Custom Skin & Colors</span>
+              <Palette className="w-4 h-4 text-pink-400" />
+              <span>Skin, Theme & Colors</span>
             </button>
           </div>
 
@@ -146,28 +215,40 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                     </span>
                     <button
                       onClick={openAuthModal}
-                      className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-950 border border-emerald-500/60 text-emerald-300 hover:bg-emerald-900 transition flex items-center gap-1"
+                      className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-950 border border-emerald-500/60 text-emerald-300 hover:bg-emerald-900 transition flex items-center gap-1 cursor-pointer"
                     >
                       <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                       <span>18+ Verified ({subscription.verifiedMethod || 'Google/FB/ID'})</span>
                     </button>
                     <button
                       onClick={openAuthModal}
-                      className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-yellow-950 border border-yellow-500/60 text-yellow-300 hover:bg-yellow-900 transition"
+                      className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-yellow-950 border border-yellow-500/60 text-yellow-300 hover:bg-yellow-900 transition cursor-pointer"
                     >
                       {subscription.plan === 'vip' ? 'VIP Pass ($14.99/mo)' : 'Basic Pass ($7.99/mo)'}
                     </button>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-pink-200/80 max-w-xl italic">
+                  <p className="text-xs sm:text-sm text-pink-200/90 max-w-xl italic">
                     "{profile.headline}"
                   </p>
 
                   <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-slate-300 pt-1">
-                    <span className="flex items-center gap-1 text-slate-400">
+                    <span className="flex items-center gap-1 text-slate-300">
                       <MapPin className="w-3.5 h-3.5 text-pink-400" />
                       {profile.location}
                     </span>
+                    {profile.occupation && (
+                      <span className="flex items-center gap-1 text-cyan-300 font-medium">
+                        <Briefcase className="w-3.5 h-3.5 text-cyan-400" />
+                        {profile.occupation}
+                      </span>
+                    )}
+                    {profile.zodiac && (
+                      <span className="flex items-center gap-1 text-purple-300 font-medium">
+                        <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                        {profile.zodiac}
+                      </span>
+                    )}
                     <span className="flex items-center gap-1 text-pink-300 font-medium bg-pink-950/50 px-2 py-0.5 rounded-md border border-pink-800/40">
                       <Heart className="w-3.5 h-3.5 fill-pink-500 text-pink-500" />
                       {profile.relationshipStatus}
@@ -176,27 +257,27 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                 </div>
               </div>
 
-              {/* Status Mood Pill */}
+              {/* Status Mood Pill & Actions */}
               <div className="flex flex-col items-center sm:items-end gap-2 w-full sm:w-auto">
                 <div className="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-purple-500/40 text-purple-200 text-xs font-semibold flex items-center gap-2 shadow-inner">
-                  <Zap className="w-4 h-4 text-yellow-400 animate-bounce" />
+                  <Zap className="w-4 h-4 text-yellow-400" />
                   <span>{profile.statusMood}</span>
                 </div>
 
                 <div className="flex gap-2">
                   <button
+                    onClick={() => setIsEditingBio(true)}
+                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition cursor-pointer"
+                  >
+                    <Edit3 className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Edit Bio</span>
+                  </button>
+                  <button
                     onClick={() => openWingmanWithPrompt("Give me a fast confidence boost for my upcoming date!")}
-                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-pink-500/30 transition"
+                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-pink-500/30 transition cursor-pointer"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>Wingman Boost</span>
-                  </button>
-                  <button
-                    onClick={() => toggleMiniWindow('app_spotify')}
-                    className="px-3 py-1.5 rounded-xl bg-emerald-950 border border-emerald-500/50 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 hover:bg-emerald-900/60 transition"
-                  >
-                    <Music className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Open Music Hub</span>
                   </button>
                 </div>
               </div>
@@ -204,7 +285,35 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
           </div>
         </div>
 
-        {/* Theme Customizer Drawer (If Toggled) */}
+        {/* Favorite Quote / Personal Motto Banner */}
+        <div className="relative p-5 rounded-2xl bg-gradient-to-r from-pink-950/40 via-purple-950/40 to-slate-900/90 border border-pink-500/30 shadow-xl backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 shrink-0">
+              <Quote className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-pink-400">
+                Personal Motto & Favorite Quote
+              </span>
+              <p className="text-sm sm:text-base font-serif italic text-white leading-relaxed mt-0.5">
+                "{profile.quote || 'You don\'t find chemistry in a rigid algorithm, you create it across a cocktail table with real conversation.'}"
+              </p>
+              <span className="text-xs text-pink-300 font-medium block mt-1">
+                — {profile.quoteAuthor || profile.name}
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIsEditingQuote(true)}
+            className="px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold transition shrink-0 cursor-pointer flex items-center gap-1.5"
+          >
+            <Edit3 className="w-3.5 h-3.5 text-pink-400" />
+            <span>Customize Quote</span>
+          </button>
+        </div>
+
+        {/* Theme Customizer Drawer */}
         {isEditingTheme && (
           <div className="p-5 rounded-2xl bg-slate-900/95 border-2 border-pink-500/60 shadow-2xl space-y-4 animate-fadeIn text-slate-200">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -267,71 +376,73 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
         {/* Main 2-Column MySpace Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* Left Column: Music Player Box, Bio, Wingman Badges */}
+          {/* Left Column: RUN MUSIC APP / RADIO PLAYER ON PROFILE, Bio & Details, Interests */}
           <div className="space-y-6">
 
-            {/* MySpace Music Box */}
-            <div className="p-4 rounded-2xl bg-slate-900/90 border border-purple-500/40 shadow-xl space-y-3 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-              <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-                <div className="flex items-center gap-2 text-pink-400 font-bold text-xs uppercase tracking-wider">
-                  <Music className="w-4 h-4 animate-bounce" />
-                  <span>Face Space Music Box</span>
-                </div>
-                <span className="text-[10px] text-emerald-400 font-mono bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30">
-                  AUTOPLAY ON
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3 bg-slate-950/80 p-3 rounded-xl border border-slate-800">
-                <img
-                  src={profile.currentSong.albumArt}
-                  alt={profile.currentSong.title}
-                  referrerPolicy="no-referrer"
-                  className="w-14 h-14 rounded-lg object-cover border border-purple-500/40 shadow"
-                />
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-white truncate">{profile.currentSong.title}</h4>
-                  <p className="text-[11px] text-slate-400 truncate">{profile.currentSong.artist}</p>
-                  <div className="flex items-center gap-1 mt-1 text-[10px] text-pink-400">
-                    <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-ping"></span>
-                    <span>Playing on Profile</span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setIsPlayingSong(!isPlayingSong)}
-                  className="w-9 h-9 rounded-full bg-pink-600 hover:bg-pink-500 text-white flex items-center justify-center shadow-lg shadow-pink-500/30 transition"
-                >
-                  {isPlayingSong ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
-                </button>
-              </div>
-
-              {/* Embedded Spotify / Music Iframe Widget Preview */}
-              <div className="rounded-xl overflow-hidden border border-slate-800 bg-black/60">
-                <iframe
-                  src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0"
-                  width="100%"
-                  height="152"
-                  frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                  title="Spotify Player"
-                  className="w-full rounded-xl"
-                ></iframe>
-              </div>
-            </div>
+            {/* Profile Music & Radio Engine Runner */}
+            <ProfileRadioPlayer
+              profile={profile}
+              setProfile={setProfile}
+              isOwner={true}
+            />
 
             {/* About Me & Bio Box */}
             <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-3">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2 border-b border-slate-800 pb-2">
-                <Edit3 className="w-4 h-4 text-pink-400" />
-                <span>About Me & Date Vibes</span>
-              </h3>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                  <Edit3 className="w-4 h-4 text-pink-400" />
+                  <span>About Me & Date Vibes</span>
+                </h3>
+                <button
+                  onClick={() => setIsEditingBio(true)}
+                  className="text-[11px] text-pink-400 hover:underline font-semibold"
+                >
+                  Edit
+                </button>
+              </div>
               <p className="text-xs text-slate-300 leading-relaxed">
                 {profile.bio}
               </p>
+
+              {/* Interests & Passions Tags */}
+              <div className="pt-2 border-t border-slate-800/80 space-y-2">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                  Interests & Passions
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {(profile.interests || ['Indie Vinyl', 'Speakeasies', 'Late-night Drives', 'Synthwave', 'Street Photography']).map((interest, i) => (
+                    <span 
+                      key={i} 
+                      className="text-[11px] px-2.5 py-1 rounded-full bg-slate-950 border border-slate-800 text-pink-300 flex items-center gap-1 group"
+                    >
+                      <span>{interest}</span>
+                      <button 
+                        onClick={() => handleRemoveInterestTag(interest)}
+                        className="text-slate-500 hover:text-red-400 ml-0.5 text-xs font-bold"
+                        title="Remove tag"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+
+                <form onSubmit={handleAddInterestTag} className="flex gap-2 pt-1">
+                  <input
+                    type="text"
+                    placeholder="Add new interest tag..."
+                    value={newInterestTag}
+                    onChange={(e) => setNewInterestTag(e.target.value)}
+                    className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-pink-500"
+                  />
+                  <button
+                    type="submit"
+                    className="px-2.5 py-1 rounded-lg bg-slate-800 text-xs font-semibold text-slate-200 hover:bg-slate-700"
+                  >
+                    Add
+                  </button>
+                </form>
+              </div>
             </div>
 
             {/* Wingman Stats & Achievements */}
@@ -449,40 +560,31 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-pink-600 hover:bg-pink-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-md shadow-pink-600/30 transition"
+                  disabled={!newWallPost.trim()}
+                  className="px-4 py-2 rounded-xl bg-pink-600 disabled:bg-slate-800 hover:bg-pink-500 text-white text-xs font-bold transition flex items-center gap-1.5"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Post</span>
                 </button>
               </form>
 
-              {/* Wall Posts Feed */}
-              <div className="space-y-3">
-                {wallPosts.map((post) => (
-                  <div key={post.id} className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={post.avatar}
-                          alt={post.author}
-                          referrerPolicy="no-referrer"
-                          className="w-8 h-8 rounded-lg object-cover"
-                        />
-                        <div>
-                          <h4 className="text-xs font-bold text-white">{post.author}</h4>
-                          <p className="text-[10px] text-slate-500">{post.time}</p>
-                        </div>
+              {/* Comments Feed */}
+              <div className="space-y-3 pt-2">
+                {wallPosts.map((wp) => (
+                  <div key={wp.id} className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 flex items-start gap-3">
+                    <img
+                      src={wp.avatar}
+                      alt={wp.author}
+                      referrerPolicy="no-referrer"
+                      className="w-9 h-9 rounded-full object-cover border border-slate-700 shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-xs text-white">{wp.author}</span>
+                        <span className="text-[10px] text-slate-400">{wp.time}</span>
                       </div>
-
-                      <button className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-pink-400">
-                        <Heart className="w-3.5 h-3.5" />
-                        <span>{post.likes}</span>
-                      </button>
+                      <p className="text-xs text-slate-300 leading-relaxed">{wp.text}</p>
                     </div>
-
-                    <p className="text-xs text-slate-300 pl-10 leading-relaxed">
-                      {post.text}
-                    </p>
                   </div>
                 ))}
               </div>
@@ -493,6 +595,129 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
         </div>
 
       </div>
+
+      {/* Edit Quote Modal */}
+      {isEditingQuote && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-slate-900 border border-pink-500/40 rounded-2xl p-6 shadow-2xl space-y-4">
+            <h3 className="font-bold text-white text-base flex items-center gap-2">
+              <Quote className="w-4 h-4 text-pink-400" />
+              <span>Customize Profile Quote & Motto</span>
+            </h3>
+
+            <form onSubmit={handleSaveQuote} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Your Quote / Motto</label>
+                <textarea
+                  value={tempQuote}
+                  onChange={(e) => setTempQuote(e.target.value)}
+                  rows={3}
+                  required
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Quote Author / Attribution</label>
+                <input
+                  type="text"
+                  value={tempQuoteAuthor}
+                  onChange={(e) => setTempQuoteAuthor(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-500"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsEditingQuote(false)}
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-xl bg-pink-600 text-white font-bold"
+                >
+                  Save Quote
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Bio Modal */}
+      {isEditingBio && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-slate-900 border border-pink-500/40 rounded-2xl p-6 shadow-2xl space-y-4">
+            <h3 className="font-bold text-white text-base flex items-center gap-2">
+              <Edit3 className="w-4 h-4 text-pink-400" />
+              <span>Customize Bio & Identity</span>
+            </h3>
+
+            <form onSubmit={handleSaveBio} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">About Me / Bio</label>
+                <textarea
+                  value={tempBio}
+                  onChange={(e) => setTempBio(e.target.value)}
+                  rows={4}
+                  required
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-pink-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Occupation</label>
+                  <input
+                    type="text"
+                    value={tempOccupation}
+                    onChange={(e) => setTempOccupation(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-white focus:outline-none focus:border-pink-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Zodiac Sign</label>
+                  <input
+                    type="text"
+                    value={tempZodiac}
+                    onChange={(e) => setTempZodiac(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-white focus:outline-none focus:border-pink-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">City / Location</label>
+                  <input
+                    type="text"
+                    value={tempLocation}
+                    onChange={(e) => setTempLocation(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-white focus:outline-none focus:border-pink-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsEditingBio(false)}
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-xl bg-pink-600 text-white font-bold"
+                >
+                  Save Bio
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

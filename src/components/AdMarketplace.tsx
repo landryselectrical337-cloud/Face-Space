@@ -101,7 +101,7 @@ export const AdMarketplace: React.FC<AdMarketplaceProps> = ({
               </p>
               <div className="mt-2 text-[10px] text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 px-2.5 py-1 rounded-lg inline-flex items-center gap-1.5 font-bold">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>AUTOMATIC DISBURSEMENT: 60% Creators • 20% Device Network • 20% R&D & Google Dev Students</span>
+                <span>AUTOMATIC DISBURSEMENT: 70% Creators • 20% Device Network • 10% R&D & Google Dev Students</span>
               </div>
             </div>
           </div>

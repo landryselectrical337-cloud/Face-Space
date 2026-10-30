@@ -33,9 +33,9 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
   const [disbursementSuccessMsg, setDisbursementSuccessMsg] = useState('');
 
   const calculateBreakdown = (amount: number) => {
-    const creator = Number((amount * 0.60).toFixed(2));
+    const creator = Number((amount * 0.70).toFixed(2));
     const device = Number((amount * 0.20).toFixed(2));
-    const rdStudents = Number((amount * 0.20).toFixed(2));
+    const rdStudents = Number((amount * 0.10).toFixed(2));
     return { creator, device, rdStudents };
   };
 
@@ -69,7 +69,7 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
       recentTransactions: [newTx, ...prev.recentTransactions],
     }));
 
-    setDisbursementSuccessMsg(`Disbursed $${customAmount.toFixed(2)} automatically across 60/20/20 accounts!`);
+    setDisbursementSuccessMsg(`Disbursed $${customAmount.toFixed(2)} automatically across 70/20/10 accounts!`);
     setTimeout(() => setDisbursementSuccessMsg(''), 4000);
   };
 
@@ -91,11 +91,11 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
                   Automated Revenue Disbursement Ledger
                 </h2>
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 border border-emerald-500/60 text-emerald-300">
-                  SMART CONTRACT 60/20/20
+                  SMART CONTRACT 70/20/10
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-emerald-200/90 font-medium">
-                100% Transparent, automated fund distribution: 60% Creators, 20% Device Network, & 20% Developers (AI Infrastructure & Google Dev Students).
+                100% Transparent, automated fund distribution: 70% Creators, 20% Device Network, & 10% Developers (AI Infrastructure & Google Dev Students).
               </p>
             </div>
           </div>
@@ -113,10 +113,10 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
       {/* 3 Core Fund Breakdown Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        {/* 60% Creators */}
+        {/* 70% Creators */}
         <div className="p-6 rounded-3xl bg-slate-900 border-2 border-purple-500/60 shadow-xl space-y-4 relative overflow-hidden group hover:border-purple-400 transition">
           <div className="absolute top-0 right-0 px-4 py-1.5 rounded-bl-2xl bg-purple-600 text-white font-black text-xs">
-            60% SHARE
+            70% SHARE
           </div>
 
           <div className="flex items-center gap-3">
@@ -139,7 +139,7 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
           <ul className="text-xs text-slate-300 space-y-2 pt-1">
             <li className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
-              <span>Direct payout to video vlog creators</span>
+              <span>Direct payout to video vlog & reels creators</span>
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
@@ -147,7 +147,7 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
-              <span>Community event host incentives</span>
+              <span>Community event host incentives & tip pool</span>
             </li>
           </ul>
         </div>
@@ -191,10 +191,10 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
           </ul>
         </div>
 
-        {/* 20% Developers, AI Tech & Google Dev Students */}
+        {/* 10% Developers, AI Tech & Google Dev Students */}
         <div className="p-6 rounded-3xl bg-slate-900 border-2 border-yellow-500/60 shadow-xl space-y-4 relative overflow-hidden group hover:border-yellow-400 transition">
           <div className="absolute top-0 right-0 px-4 py-1.5 rounded-bl-2xl bg-yellow-500 text-slate-950 font-black text-xs">
-            20% SHARE
+            10% SHARE
           </div>
 
           <div className="flex items-center gap-3">
@@ -241,7 +241,7 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
               <span>Live Automatic Disbursement Tester & Calculator</span>
             </h3>
             <p className="text-xs text-slate-400">
-              Test how any membership payment or ad subscription is instantly split 60% / 20% / 20%.
+              Test how any membership payment or ad subscription is instantly split 70% / 20% / 10%.
             </p>
           </div>
           <span className="text-[11px] font-bold text-emerald-400 bg-emerald-950 border border-emerald-500/40 px-3 py-1 rounded-full hidden sm:inline">
@@ -311,7 +311,7 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
               className="w-full py-3 bg-gradient-to-r from-emerald-500 via-cyan-600 to-purple-600 hover:from-emerald-600 hover:to-purple-700 text-white font-extrabold rounded-xl text-xs shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2"
             >
               <RefreshCw className="w-4 h-4" />
-              <span>Simulate Instant 60 / 20 / 20 Smart Disbursement</span>
+              <span>Simulate Instant 70 / 20 / 10 Smart Disbursement</span>
             </button>
 
           </div>
@@ -325,7 +325,7 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
 
             <div className="space-y-2 text-xs">
               <div className="flex items-center justify-between p-2 rounded-lg bg-purple-950/60 border border-purple-500/30">
-                <span className="text-purple-300 font-bold">60% Creator Cut:</span>
+                <span className="text-purple-300 font-bold">70% Creator Cut:</span>
                 <span className="font-extrabold text-white">${currentCalc.creator.toFixed(2)}</span>
               </div>
 
@@ -335,7 +335,7 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
               </div>
 
               <div className="flex items-center justify-between p-2 rounded-lg bg-yellow-950/60 border border-yellow-500/30">
-                <span className="text-yellow-300 font-bold">20% Developers (R&D / Google Students):</span>
+                <span className="text-yellow-300 font-bold">10% Developers (R&D / Google Students):</span>
                 <span className="font-extrabold text-white">${currentCalc.rdStudents.toFixed(2)}</span>
               </div>
             </div>
@@ -363,9 +363,9 @@ export const FundDisbursementDashboard: React.FC<FundDisbursementDashboardProps>
               <tr>
                 <th className="p-3">Source</th>
                 <th className="p-3">Total ($)</th>
-                <th className="p-3">60% Creator</th>
+                <th className="p-3">70% Creator</th>
                 <th className="p-3">20% Device</th>
-                <th className="p-3">20% Developers (R&D / Students)</th>
+                <th className="p-3">10% Developers (R&D / Students)</th>
                 <th className="p-3">Recipient / Target</th>
                 <th className="p-3 text-right">Status</th>
               </tr>

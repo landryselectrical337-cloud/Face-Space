@@ -33,6 +33,11 @@ export interface UserProfile {
   bannerUrl: string;
   headline: string;
   bio: string;
+  quote?: string;
+  quoteAuthor?: string;
+  occupation?: string;
+  zodiac?: string;
+  interests?: string[];
   theme: ThemePreset;
   customBgColor: string;
   customTextColor: string;
@@ -41,18 +46,23 @@ export interface UserProfile {
   statusMood: string;
   relationshipStatus: string;
   location: string;
+  audioMode?: 'song' | 'radio';
+  radioStationId?: string;
   currentSong: {
     title: string;
     artist: string;
     albumArt: string;
     embedUrl?: string;
     isPlaying?: boolean;
+    audioUrl?: string;
   };
   topEight: Friend[];
   stats: {
     profileViews: number;
     wingsEarned: number;
     datesSuccess: number;
+    followersCount?: number;
+    blogPostsCount?: number;
   };
 }
 
@@ -137,9 +147,9 @@ export interface AdListing {
 
 export interface FundDisbursement {
   totalRevenue: number;
-  creatorShare: number;       // 60%
+  creatorShare: number;       // 70%
   deviceShare: number;        // 20%
-  rdAndStudentsShare: number; // 20%
+  rdAndStudentsShare: number; // 10%
   lastDisbursementDate: string;
   recentTransactions: DisbursementTransaction[];
 }
@@ -148,10 +158,103 @@ export interface DisbursementTransaction {
   id: string;
   source: string;
   totalAmount: number;
-  creatorCut: number; // 60%
+  creatorCut: number; // 70%
   deviceCut: number;  // 20%
-  rdCut: number;      // 20%
+  rdCut: number;      // 10%
   timestamp: string;
   recipientName?: string;
   status: 'Completed (Automated Ledger)' | 'In Escrow';
 }
+
+export interface RadioStation {
+  id: string;
+  name: string;
+  genre: string;
+  frequency: string;
+  tagline: string;
+  currentTrack: string;
+  currentArtist: string;
+  listenersCount: number;
+  badge: string;
+  streamAudioUrl: string;
+  accentColor: string;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  authorName: string;
+  authorUsername: string;
+  authorAvatar: string;
+  authorRole: string;
+  category: 'Dating Advice' | 'City Hotspots' | 'Music & Culture' | 'Creator Economy' | 'Style & Vibe';
+  readTime: string;
+  publishDate: string;
+  coverImage: string;
+  excerpt: string;
+  content: string[];
+  likes: number;
+  isLiked?: boolean;
+  shares: number;
+  comments: CommentItem[];
+  tags: string[];
+}
+
+export interface ChatMessage {
+  id: string;
+  senderId: 'user' | string;
+  senderName: string;
+  senderAvatar: string;
+  text: string;
+  timestamp: string;
+  isRead?: boolean;
+  isAudio?: boolean;
+  audioDuration?: string;
+}
+
+export interface ChatConversation {
+  id: string;
+  contactId: string;
+  contactName: string;
+  contactUsername: string;
+  contactAvatar: string;
+  contactRole?: string;
+  isOnline: boolean;
+  lastActive?: string;
+  unreadCount: number;
+  isTyping?: boolean;
+  messages: ChatMessage[];
+}
+
+export interface ReelItem {
+  id: string;
+  creatorName: string;
+  creatorUsername: string;
+  creatorAvatar: string;
+  isFollowing: boolean;
+  title: string;
+  caption: string;
+  tags: string[];
+  songTitle: string;
+  songArtist: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  likes: number;
+  isLiked?: boolean;
+  shares: number;
+  views: number;
+  comments: CommentItem[];
+  location?: string;
+}
+
+export interface CreatorStats {
+  monthlyViews: number;
+  totalFollowers: number;
+  monthlyRevenueEstimate: number;
+  pendingPayout: number;
+  subscribersCount: number;
+  engagementRate: number;
+  creatorRank: string;
+}
+
